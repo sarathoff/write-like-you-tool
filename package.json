@@ -2,9 +2,10 @@
   "name": "my-genai-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "functions/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node functions/server.js",
+    "build": "echo 'No build step necessary'"
   },
   "keywords": [],
   "author": "",
