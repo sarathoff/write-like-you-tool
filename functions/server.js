@@ -1,32 +1,15 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const path = require('path');
 const serverless = require('serverless-http');
-
-// Load environment variables
-dotenv.config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const { google } = require('googleapis');
+const { TextToSpeechClient } = require('@google-cloud/text-to-speech');
 
 const app = express();
-const router = express.Router();
+app.use(bodyParser.json());
 
-// Middleware to parse JSON requests
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const genAI = new TextToSpeechClient();
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, './public'))); // Adjust path as needed
-
-// Load API key from environment variable
-const genAI = new GoogleGenerativeAI({ apiKey: process.env.API_KEY });
-
-// Route to serve the main HTML page
-router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, './public', 'index.html')); // Adjust path as needed
-});
-
-// Route to handle content generation
-router.post('/generate', async (req, res) => {
+app.post('/generate', async (req, res) => {
   const { topic } = req.body;
 
   try {
@@ -40,11 +23,9 @@ router.post('/generate', async (req, res) => {
 
     res.json({ generated_text: text });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error generating content');
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Error generating content' });
   }
 });
-
-app.use('/.netlify/functions/server.js', router);
 
 module.exports.handler = serverless(app);
