@@ -1,6 +1,12 @@
 [build]
-  publish = "public"
+  publish = "build"
   command = "npm run build"
+ 
 
 [functions]
   directory = "functions"
+  
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
